@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand: #ea7520;
+  --surface: #1a1a1a;
+  --surface-card: #242424;
+}
+
+body {
+  @apply bg-surface text-gray-100 font-sans antialiased min-h-screen;
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-brand-500 hover:bg-brand-600 text-white font-medium px-4 py-2.5 rounded-xl transition-colors;
+  }
+  .btn-secondary {
+    @apply bg-surface-elevated hover:bg-surface-card text-gray-200 font-medium px-4 py-2.5 rounded-xl border border-gray-600 transition-colors;
+  }
+  .card {
+    @apply bg-surface-card rounded-2xl border border-gray-700/50 shadow-lg;
+  }
+}
