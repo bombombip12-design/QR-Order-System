@@ -1,5 +1,8 @@
 const mongoose = require("mongoose");
-const { Order, Table, MenuItem, Payment } = require("../models");
+const Order = require("../Models/Order");
+const Table = require("../Models/tableModel");
+const MenuItem = require("../Models/MenuItem");
+const Payment = require("../Models/paymentModel");
 const { newOrderId, calculateOrderTotal } = require("../utils/orderUtils");
 
 const ALLOWED_STATUSES = [
@@ -219,36 +222,6 @@ async function submitRating(orderId, body) {
   return { data: ratingRecord };
 }
 
-async function submitComplaint(orderId, body) {
-  if (!mongoose.Types.ObjectId.isValid(String(orderId))) {
-    return { error: { status: 404, message: "Khong tim thay don hang." } };
-  }
-  const order = await Order.findById(orderId);
-  if (!order) return { error: { status: 404, message: "Khong tim thay don hang." } };
-  if (order.status !== "paid") {
-    return { error: { status: 400, message: "Chi duoc gui khieu nai/phan hoi sau khi thanh toan." } };
-  }
-
-  const content = String(body?.content || "").trim();
-  if (content.length < 5) {
-    return { error: { status: 400, message: "Noi dung phan hoi toi thieu 5 ky tu." } };
-  }
-
-  const complaint = {
-    title: body?.title || "Phan hoi tu khach hang",
-    content,
-    status: "open",
-    createdAt: new Date(),
-  };
-
-  order.customerFeedback = order.customerFeedback || {};
-  order.customerFeedback.complaints = order.customerFeedback.complaints || [];
-  order.customerFeedback.complaints.push(complaint);
-  await order.save();
-
-  return { data: complaint };
-}
-
 module.exports = {
   createOrder,
   getOrdersByTable,
@@ -258,5 +231,4 @@ module.exports = {
   updateOrderStatus,
   payOrder,
   submitRating,
-  submitComplaint,
 };

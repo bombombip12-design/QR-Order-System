@@ -33,13 +33,12 @@ function requireRole(allowedRoles = []) {
   return (req, res, next) => {
     if (!req.user?.role) return res.status(403).json({ message: "Forbidden" });
     const role = String(req.user.role);
-    // manager (DB mới) ~ admin; staff (DB mới) ~ waiter; giữ tương thích seed cũ
     let normalizedRole = role;
     if (role === "manager") normalizedRole = "admin";
     else if (role === "staff") normalizedRole = "waiter";
     const normalizedAllowed = allowed.map((r) => (r === "staff" ? "waiter" : r));
     if (!normalizedAllowed.includes(normalizedRole)) {
-      return res.status(403).json({ message: "Forbidden" });
+      return res.status(403).json({ message: "Forbidden" }); 
     }
     next();
   };

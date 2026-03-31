@@ -1,3 +1,7 @@
+/**
+ * Điểm vào Node.js: khởi tạo Express (app.js), kết nối MongoDB, lắng nghe cổng HTTP.
+ * Mọi API (kể cả /api/admin) được định nghĩa trong app → routes — không nằm trong frontend.
+ */
 const path = require("path");
 
 require("dotenv").config({ path: path.join(__dirname, ".env") });

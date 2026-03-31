@@ -1,8 +1,8 @@
 const bcrypt = require("bcryptjs");
 const Category = require("../Models/Category");
 const MenuItem = require("../Models/MenuItem");
-const Table = require("../Models/Table");
-const User = require("../Models/User");
+const Table = require("../Models/tableModel");
+const User = require("../Models/Users");
 const Order = require("../Models/Order");
 
 const adminService = {

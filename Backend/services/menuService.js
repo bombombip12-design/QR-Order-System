@@ -1,4 +1,5 @@
-const { Category, MenuItem } = require("../models");
+const Category = require("../Models/Category");
+const MenuItem = require("../Models/MenuItem");
 
 async function getCategories() {
   const docs = await Category.find({ isActive: true }).sort({ sortOrder: 1, createdAt: 1 }).lean();

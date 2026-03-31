@@ -1,10 +1,13 @@
+/**
+ * Ứng dụng Express: middleware JSON/CORS, static uploads, redirect /order/:code, gắn toàn bộ API dưới /api.
+ */
 const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const routes = require('./routes');
 const errorHandler = require('./middleware/errorHandler');
-const Table = require('./Models/Table');
+const Table = require('./Models/tableModel');
 
 const app = express();
 

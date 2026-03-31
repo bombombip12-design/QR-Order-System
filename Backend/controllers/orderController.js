@@ -87,18 +87,6 @@ async function submitRating(req, res) {
   }
 }
 
-async function submitComplaint(req, res) {
-  try {
-    const result = await orderService.submitComplaint(req.params.id, req.body || {});
-    if (result.error) {
-      return res.status(result.error.status).json({ message: result.error.message });
-    }
-    return res.status(201).json(result.data);
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
-}
-
 module.exports = {
   createOrder,
   getOrdersByTable,
@@ -108,5 +96,4 @@ module.exports = {
   updateStatus,
   payOrder,
   submitRating,
-  submitComplaint,
 };

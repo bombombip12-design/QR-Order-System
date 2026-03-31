@@ -1,7 +1,7 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const User = require("../Models/User");
+const User = require("../Models/Users");
 const { requireAuth } = require("../middleware/auth");
 
 /** bcrypt hash bắt đầu bằng $2a/$2b/$2y; nếu DB lưu plain text thì so sánh trực tiếp */

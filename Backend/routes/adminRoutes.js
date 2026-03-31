@@ -1,3 +1,7 @@
+/**
+ * API quản trị (/api/admin/...), xử lý bởi Node + Express.
+ * Từng nhóm route tương ứng màn hình admin: categories/menu/tables/users/orders/stats/payment-methods/ratings.
+ */
 const express = require('express');
 const adminController = require('../controllers/adminController');
 const upload = require('../middleware/upload');
@@ -50,9 +54,7 @@ router.post('/payment-methods', paymentMethodController.create);
 router.put('/payment-methods/:id', paymentMethodController.update);
 router.patch('/payment-methods/:id', paymentMethodController.patchActive);
 
-// Customer feedback (ratings & complaints)
+// Customer feedback (ratings)
 router.get('/ratings', feedbackController.getRatingsAdmin);
-router.get('/complaints', feedbackController.getComplaintsAdmin);
-router.patch('/complaints/:id/resolve', feedbackController.resolveComplaintAdmin);
 
 module.exports = router;
