@@ -1,4 +1,5 @@
-const { Table, Call } = require("../models");
+const Table = require("../Models/tableModel");
+const Call = require("../Models/Call");
 
 function findTableFilter(tableId) {
   const normalized = String(tableId).trim();

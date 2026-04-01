@@ -1,8 +1,8 @@
 const bcrypt = require("bcryptjs");
 const Category = require("../Models/Category");
 const MenuItem = require("../Models/MenuItem");
-const Table = require("../Models/Table");
-const User = require("../Models/User");
+const Table = require("../Models/tableModel");
+const User = require("../Models/Users");
 const Order = require("../Models/Order");
 
 const adminService = {
@@ -29,21 +29,25 @@ const adminService = {
 
   // --- Menu ---
   async getMenuItems() {
+    // Tra danh sach mon cho admin, kem thong tin category de frontend hien thi dung nhom.
     return MenuItem.find().populate('category').sort({ createdAt: -1 }).lean();
   },
 
   async createMenuItem(data) {
+    // Tao mon moi, sau do populate category de response day du cho UI.
     const item = await MenuItem.create(data);
     return item.populate('category');
   },
 
   async updateMenuItem(id, data) {
+    // Cap nhat mon theo id; neu khong tim thay thi tra loi 404.
     const item = await MenuItem.findByIdAndUpdate(id, data, { new: true }).populate('category');
     if (!item) throw Object.assign(new Error('Menu item not found'), { statusCode: 404 });
     return item;
   },
 
   async deleteMenuItem(id) {
+    // Xoa mon theo id; neu khong ton tai thi 404.
     const deleted = await MenuItem.findByIdAndDelete(id);
     if (!deleted) throw Object.assign(new Error('Menu item not found'), { statusCode: 404 });
     return deleted;
@@ -51,10 +55,14 @@ const adminService = {
 
   // --- Tables ---
   async getTables() {
+    // Admin tables page goi API list -> service tra danh sach ban theo tableNumber tang dan.
     return Table.find().sort({ tableNumber: 1 }).lean();
   },
 
   async createTable(data) {
+    // Luong tao ban:
+    // 1) Tim so ban lon nhat hien tai, 2) Tang +1 de sinh tableNumber, code, QR label,
+    // 3) Gan orderUrl mac dinh /table/{tableNumber} neu admin khong nhap.
     const { name, capacity, orderUrl } = data || {};
     const maxDoc = await Table.findOne().sort({ tableNumber: -1 }).select("tableNumber").lean();
     const tableNumber = maxDoc && maxDoc.tableNumber ? maxDoc.tableNumber + 1 : 1;
@@ -84,6 +92,9 @@ const adminService = {
   },
 
   async updateTable(id, data) {
+    // Luong cap nhat ban:
+    // - capacity tu frontend duoc map sang seats trong DB.
+    // - neu orderUrl de trong thi tra lai link mac dinh theo tableNumber hien co.
     const patch = { ...(data || {}) };
     if (patch.capacity !== undefined) {
       patch.seats =
@@ -111,6 +122,7 @@ const adminService = {
   },
 
   async deleteTable(id) {
+    // Xoa ban theo id (duoc goi tu AdminTables -> remove()).
     const deleted = await Table.findByIdAndDelete(id);
     if (!deleted) throw Object.assign(new Error('Table not found'), { statusCode: 404 });
     return deleted;
@@ -146,6 +158,9 @@ const adminService = {
 
   // --- Orders (quản lý đơn hàng) ---
   async getOrders(filter = {}) {
+    // Truy van danh sach don cho trang admin:
+    // - ho tro loc theo ban, trang thai don, trang thai thanh toan
+    // - populate table + items.menuItem de frontend hien thi day du ten ban/ten mon.
     const q = {};
     if (filter.table) q.table = filter.table;
     if (filter.status) q.status = filter.status;
@@ -158,6 +173,7 @@ const adminService = {
   },
 
   async getOrderById(id) {
+    // Lay chi tiet 1 don theo id (co populate du lieu lien quan de hien thi trong modal).
     const order = await Order.findById(id)
       .populate('table')
       .populate('items.menuItem')
@@ -167,6 +183,10 @@ const adminService = {
   },
 
   async updateOrderStatus(id, status) {
+    // Quy tac cap nhat trang thai:
+    // - chi chap nhan cac trang thai hop le
+    // - served => luu them moc thoi gian servedAt
+    // - cancelled => dong bo paymentStatus thanh cancelled
     const allowed = ['pending', 'preparing', 'ready', 'served', 'cancelled'];
     if (!allowed.includes(status)) {
       throw Object.assign(new Error('Trạng thái không hợp lệ'), { statusCode: 400 });
@@ -183,6 +203,10 @@ const adminService = {
 
   // --- Stats ---
   async getStats() {
+    // Tong hop cho man hinh Admin > Thong ke:
+    // - revenue: cong totalAmount cua TAT CA don (khong loc theo trang thai/thanh toan).
+    // - totalOrders: so luong document Order.
+    // - topItems: gom so luong ban theo menuItemId tu tat ca don, lay top 5, map ten tu MenuItem.
     const orders = await Order.find().lean();
     const revenue = orders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
     const totalOrders = orders.length;

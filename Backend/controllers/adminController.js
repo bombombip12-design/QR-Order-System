@@ -24,42 +24,50 @@ const deleteCategory = asyncHandler(async (req, res) => {
 
 // --- Menu ---
 const getMenu = asyncHandler(async (req, res) => {
+  // Route GET /api/admin/menu -> lay danh sach mon cho trang admin.
   const items = await adminService.getMenuItems();
   res.json({ items });
 });
 
 const createMenuItem = asyncHandler(async (req, res) => {
+  // Route POST /api/admin/menu -> tao mon moi tu du lieu form.
   const item = await adminService.createMenuItem(req.body);
   res.status(201).json({ item });
 });
 
 const updateMenuItem = asyncHandler(async (req, res) => {
+  // Route PATCH /api/admin/menu/:id -> cap nhat mon theo id.
   const item = await adminService.updateMenuItem(req.params.id, req.body);
   res.json({ item });
 });
 
 const deleteMenuItem = asyncHandler(async (req, res) => {
+  // Route DELETE /api/admin/menu/:id -> xoa mon theo id.
   await adminService.deleteMenuItem(req.params.id);
   res.status(204).end();
 });
 
 // --- Tables ---
 const getTables = asyncHandler(async (req, res) => {
+  // Route GET /api/admin/tables -> goi service lay danh sach ban tu DB.
   const tables = await adminService.getTables();
   res.json({ tables });
 });
 
 const createTable = asyncHandler(async (req, res) => {
+  // Route POST /api/admin/tables -> tao ban moi theo payload tu form admin.
   const table = await adminService.createTable(req.body);
   res.status(201).json({ table });
 });
 
 const updateTable = asyncHandler(async (req, res) => {
+  // Route PATCH/PUT /api/admin/tables/:id -> cap nhat thong tin 1 ban.
   const table = await adminService.updateTable(req.params.id, req.body);
   res.json({ table });
 });
 
 const deleteTable = asyncHandler(async (req, res) => {
+  // Route DELETE /api/admin/tables/:id -> xoa 1 ban theo id.
   await adminService.deleteTable(req.params.id);
   res.status(204).end();
 });
@@ -121,6 +129,8 @@ const deleteUser = asyncHandler(async (req, res) => {
 
 // --- Orders (quản lý đơn hàng) ---
 const getOrders = asyncHandler(async (req, res) => {
+  // Route GET /api/admin/orders:
+  // nhan cac query filter tu frontend (table/status/paymentStatus) roi chuyen cho service.
   const { table, status, paymentStatus } = req.query;
   const filter = {};
   if (table) filter.table = table;
@@ -131,11 +141,13 @@ const getOrders = asyncHandler(async (req, res) => {
 });
 
 const getOrderById = asyncHandler(async (req, res) => {
+  // Route GET /api/admin/orders/:id -> lay chi tiet 1 don phuc vu popup "Xem".
   const order = await adminService.getOrderById(req.params.id);
   res.json({ order });
 });
 
 const updateOrderStatus = asyncHandler(async (req, res) => {
+  // Route PATCH /api/admin/orders/:id/status -> cap nhat trang thai nghiep vu cua don.
   const { status } = req.body;
   if (!status) return res.status(400).json({ message: 'Thiếu trạng thái' });
   const order = await adminService.updateOrderStatus(req.params.id, status);
@@ -144,6 +156,7 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
 
 // --- Stats ---
 const getStats = asyncHandler(async (req, res) => {
+  // Route GET /api/admin/stats -> tra JSON { revenue, totalOrders, topItems }.
   const stats = await adminService.getStats();
   res.json(stats);
 });

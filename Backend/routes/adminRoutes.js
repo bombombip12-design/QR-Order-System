@@ -1,3 +1,7 @@
+/**
+ * API quản trị (/api/admin/...), xử lý bởi Node + Express.
+ * Từng nhóm route tương ứng màn hình admin: categories/menu/tables/users/orders/stats/payment-methods/ratings.
+ */
 const express = require('express');
 const adminController = require('../controllers/adminController');
 const upload = require('../middleware/upload');
@@ -16,12 +20,22 @@ router.delete('/categories/:id', adminController.deleteCategory);
 router.post('/upload', upload.single('image'), adminController.uploadImage);
 
 // Menu
+// Luong cho man hinh AdminMenu:
+// GET    /menu        -> lay danh sach mon
+// POST   /menu        -> tao mon moi
+// PATCH  /menu/:id    -> cap nhat mon
+// DELETE /menu/:id    -> xoa mon
 router.get('/menu', adminController.getMenu);
 router.post('/menu', adminController.createMenuItem);
 router.patch('/menu/:id', adminController.updateMenuItem);
 router.delete('/menu/:id', adminController.deleteMenuItem);
 
 // Tables
+// Luong cho man hinh AdminTables:
+// GET    /tables           -> lay danh sach ban
+// POST   /tables           -> tao ban moi
+// PUT/PATCH /tables/:id    -> cap nhat thong tin ban
+// DELETE /tables/:id       -> xoa ban
 router.get('/tables', adminController.getTables);
 router.post('/tables', adminController.createTable);
 // Back-Ends compatibility alias
@@ -37,11 +51,15 @@ router.patch('/users/:id', adminController.updateUser);
 router.delete('/users/:id', adminController.deleteUser);
 
 // Orders (quản lý đơn hàng)
+// Luong cho man hinh AdminOrders:
+// GET   /orders             -> danh sach don (co the loc theo query)
+// GET   /orders/:id         -> chi tiet 1 don
+// PATCH /orders/:id/status  -> cap nhat trang thai don
 router.get('/orders', adminController.getOrders);
 router.get('/orders/:id', adminController.getOrderById);
 router.patch('/orders/:id/status', adminController.updateOrderStatus);
 
-// Stats
+// Thong ke (AdminStats): GET /stats -> tong hop tu bang Order + MenuItem
 router.get('/stats', adminController.getStats);
 
 // Payment methods (cash, card, ...)
@@ -50,9 +68,8 @@ router.post('/payment-methods', paymentMethodController.create);
 router.put('/payment-methods/:id', paymentMethodController.update);
 router.patch('/payment-methods/:id', paymentMethodController.patchActive);
 
-// Customer feedback (ratings & complaints)
+// Customer feedback (ratings)
 router.get('/ratings', feedbackController.getRatingsAdmin);
-router.get('/complaints', feedbackController.getComplaintsAdmin);
-router.patch('/complaints/:id/resolve', feedbackController.resolveComplaintAdmin);
+router.delete('/ratings/:id', feedbackController.deleteRatingAdmin);
 
 module.exports = router;

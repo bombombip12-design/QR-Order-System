@@ -1,10 +1,10 @@
 const express = require('express');
 const Category = require("../Models/Category");
 const MenuItem = require("../Models/MenuItem");
-const Table = require("../Models/Table");
+const Table = require("../Models/tableModel");
 const Order = require("../Models/Order");
 const Call = require("../Models/Call");
-const Payment = require("../Models/Payment");
+const Payment = require("../Models/paymentModel");
 const PaymentMethod = require("../Models/PaymentMethod");
 const feedbackController = require('../controllers/feedbackController');
 const asyncHandler = require('../utils/asyncHandler');
@@ -499,9 +499,8 @@ router.get('/orders/:id', asyncHandler(async (req, res) => {
   res.json(transformed);
 }));
 
-// Customer feedback (ratings & complaints)
+// Customer feedback (ratings)
 router.post('/orders/:orderId/rating', feedbackController.submitRating);
-router.post('/orders/:orderId/complaint', feedbackController.submitComplaint);
 
 // Calls (public)
 router.post('/calls', asyncHandler(async (req, res) => {
